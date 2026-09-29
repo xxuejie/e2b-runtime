@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 
 	containerregistry "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/uuid"
@@ -47,6 +48,9 @@ func constructLayerFilesFromOCI(
 		ResultPath:     provisionScriptResultPath,
 		Provider:       buildContext.BuilderConfig.Provider,
 		DistroSelector: distro.ShellSelector(),
+		DevAptMirror:      os.Getenv("DEV_APT_MIRROR"),
+		DevResolver:       os.Getenv("DEV_RESOLVER"),
+		DevDockerCeMirror: os.Getenv("DEV_DOCKER_CE_MIRROR"),
 	})
 	if err != nil {
 		return nil, nil, containerregistry.Config{}, fmt.Errorf("error getting provision script: %w", err)

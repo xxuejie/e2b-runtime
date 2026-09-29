@@ -43,6 +43,27 @@ mkdir -p /usr/local/share/e2b
     echo "E2B_ADMIN_GROUP='$E2B_ADMIN_GROUP'"
 } > /usr/local/share/e2b/distro.env
 
+# dev(localhost): build-time network shaping, injected by the orchestrator from
+# DEV_APT_MIRROR / DEV_RESOLVER / DEV_DOCKER_CE_MIRROR. All blocks are no-ops
+# when the values are unset, so the upstream script behavior is unchanged.
+if [ -n "{{ .DevAptMirror }}" ]; then
+    echo "Switching apt sources to mirror {{ .DevAptMirror }}"
+    $BUSYBOX sed -i "s|//archive.ubuntu.com|//{{ .DevAptMirror }}|g; s|//security.ubuntu.com|//{{ .DevAptMirror }}|g; s|//deb.debian.org|//{{ .DevAptMirror }}|g; s|//security.debian.org|//{{ .DevAptMirror }}|g" \
+        /etc/apt/sources.list /etc/apt/sources.list.d/*.sources /etc/apt/sources.list.d/*.list 2>/dev/null || true
+fi
+if [ -n "{{ .DevResolver }}" ]; then
+    echo "Setting resolver to {{ .DevResolver }}"
+    $BUSYBOX chattr -i /etc/resolv.conf 2>/dev/null || true
+    printf 'nameserver %s\n' "{{ .DevResolver }}" > /etc/resolv.conf
+    $BUSYBOX chattr +i /etc/resolv.conf 2>/dev/null || true
+fi
+if [ -n "{{ .DevDockerCeMirror }}" ]; then
+    echo "Pointing docker-ce installs at {{ .DevDockerCeMirror }}"
+    mkdir -p /etc/profile.d
+    printf 'export DOWNLOAD_URL=%s\n' "{{ .DevDockerCeMirror }}" > /etc/profile.d/e2b-dev-docker.sh
+    chmod 0644 /etc/profile.d/e2b-dev-docker.sh
+fi
+
 # Helper function to check if a package is installed (distro-specific query)
 is_package_installed() {
     e2b_pkg_query "$1"

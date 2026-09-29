@@ -57,6 +57,19 @@ type ProvisionScriptParams struct {
 	// DistroSelector is the generated POSIX-sh block that selects the base
 	// image's distro profile by its /etc/os-release ID.
 	DistroSelector string
+	// DevAptMirror, when set (DEV_APT_MIRROR on the orchestrator), rewrites the
+	// image's apt sources to this domestic mirror host — build-time package
+	// fetches ride a fast local route instead of the (slow-from-here) upstream.
+	DevAptMirror string
+	// DevResolver, when set (DEV_RESOLVER), replaces /etc/resolv.conf in the
+	// build VM — the image's default (8.8.8.8) is unreliable from some
+	// networks, and build steps resolve pypi/github hosts directly.
+	DevResolver string
+	// DevDockerCeMirror, when set (DEV_DOCKER_CE_MIRROR), exports DOWNLOAD_URL
+	// for build steps — get.docker.com's installer reads it and configures its
+	// apt repo from the mirror instead of download.docker.com, which is
+	// unreachable from some networks.
+	DevDockerCeMirror string
 }
 
 func getProvisionScript(
