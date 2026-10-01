@@ -70,6 +70,10 @@ type ProvisionScriptParams struct {
 	// apt repo from the mirror instead of download.docker.com, which is
 	// unreachable from some networks.
 	DevDockerCeMirror string
+	// DevNoProxySuffixes, when set (DEV_NO_PROXY_SUFFIXES), appends the value to
+	// /etc/environment as NO_PROXY/no_proxy so every process in the sandbox
+	// bypasses any proxy for those hosts. Baked in at template build time.
+	DevNoProxySuffixes string
 }
 
 func getProvisionScript(

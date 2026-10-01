@@ -63,6 +63,10 @@ if [ -n "{{ .DevDockerCeMirror }}" ]; then
     printf 'export DOWNLOAD_URL=%s\n' "{{ .DevDockerCeMirror }}" > /etc/profile.d/e2b-dev-docker.sh
     chmod 0644 /etc/profile.d/e2b-dev-docker.sh
 fi
+if [ -n "{{ .DevNoProxySuffixes }}" ]; then
+    echo "Adding {{ .DevNoProxySuffixes }} to no_proxy"
+    printf 'NO_PROXY=%s\nno_proxy=%s\n' "{{ .DevNoProxySuffixes }}" "{{ .DevNoProxySuffixes }}" >> /etc/environment
+fi
 
 # Helper function to check if a package is installed (distro-specific query)
 is_package_installed() {

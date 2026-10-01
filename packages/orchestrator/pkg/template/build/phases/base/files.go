@@ -51,6 +51,7 @@ func constructLayerFilesFromOCI(
 		DevAptMirror:      os.Getenv("DEV_APT_MIRROR"),
 		DevResolver:       os.Getenv("DEV_RESOLVER"),
 		DevDockerCeMirror: os.Getenv("DEV_DOCKER_CE_MIRROR"),
+		DevNoProxySuffixes: os.Getenv("DEV_NO_PROXY_SUFFIXES"),
 	})
 	if err != nil {
 		return nil, nil, containerregistry.Config{}, fmt.Errorf("error getting provision script: %w", err)
